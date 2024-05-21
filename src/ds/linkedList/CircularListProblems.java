@@ -53,6 +53,29 @@ public class CircularListProblems<T> {
         }
     }
 
+    T startNodeOfCircle(CircularListProblems<T> list2) {
+        Node<T> fastPointer = head;
+        Node<T> slowPointer = list2.head;
+        if (fastPointer == null || slowPointer == null) {
+            return null;
+        } else {
+            while (fastPointer != slowPointer) {
+                if (fastPointer.next == null || slowPointer.next == null) {
+                    return null;
+                } else {
+                    fastPointer = fastPointer.next.next;
+                    slowPointer = slowPointer.next;
+                }
+            }
+            fastPointer = length > list2.length ? head: list2.head;
+            while (slowPointer != fastPointer) {
+                slowPointer = slowPointer.next;
+                fastPointer = fastPointer.next.next;
+            }
+            return fastPointer.value;
+        }
+    }
+
     public Node<T> getLastNode() {
         Node<T> current = head;
         for (int i = 0; i < length - 1; i++) {
@@ -65,7 +88,7 @@ public class CircularListProblems<T> {
         CircularListProblems<Integer> list = new CircularListProblems<>(1, 2, 3, 4, 5, 6);
         System.out.println(list);
 
-        CircularListProblems<Integer> list2 = new CircularListProblems<>(11, 12, 13);
+        CircularListProblems<Integer> list2 = new CircularListProblems<>(11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
         CircularListProblems<Integer> circle = new CircularListProblems<>(21, 22, 23, 24, 25, 26);
         Node<Integer> lastNodeOfList2 = list2.getLastNode();
         lastNodeOfList2.next = circle.head;
@@ -82,6 +105,9 @@ public class CircularListProblems<T> {
         CircularListProblems<Integer> newList = new CircularListProblems<>(12);
         newList.getLastNode().next = null;
         System.out.println(list.isContainCircular(newList));
+
+        System.out.println("Start node of circle = " + list.startNodeOfCircle(list2));
+        System.out.println("Start node of circle = " + list2.startNodeOfCircle(list));
     }
 
     private static class Node<T> {

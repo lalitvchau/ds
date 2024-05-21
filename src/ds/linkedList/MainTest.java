@@ -11,8 +11,10 @@ public class MainTest {
         list.removeAtEnd();
         System.out.println(list);
         System.out.println(list.findEndNthElement(2));
-        System.out.println(list.findEndNthElement(2));
+        System.out.println("Middle "+list.getMiddleOfList());
+        LinkedList<Integer> list2 = new LinkedList<>(1);
 
-
+        System.out.println(list2.findEndNthElement(2));
+        System.out.println("Middle "+list2.getMiddleOfList());
     }
 }

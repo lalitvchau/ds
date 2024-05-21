@@ -62,32 +62,42 @@ public class LinkedList<T> {
 
     public T findEndNthElement(int offsetFromEnd) {
         if (offsetFromEnd >= length) {
-            return (T) head.value;
-        }else{
+            return null;
+        } else {
             Node<T> current = head;
             int diff = length - offsetFromEnd;
-            while(diff-->0){
-                current=current.next;
+            while (diff-- > 0) {
+                current = current.next;
             }
-            return (T) current.value;
+            return current.value;
         }
     }
 
     public T findEndNthElementWithoutLength(int offsetFromEnd) {
         Node<T> fastPointer = head;
-        Node<T> slowPointer= head;
-        while(offsetFromEnd-->0){
-            fastPointer=fastPointer.next;
+        Node<T> slowPointer = head;
+        while (offsetFromEnd-- > 0) {
+            fastPointer = fastPointer.next;
         }
-        while(fastPointer.next!=null){
-            slowPointer=slowPointer.next;
-            fastPointer=fastPointer.next;
+        while (fastPointer.next != null) {
+            slowPointer = slowPointer.next;
+            fastPointer = fastPointer.next;
         }
-        if(offsetFromEnd==0){
+        if (offsetFromEnd == 0) {
             return slowPointer.value;
-        }else{
+        } else {
             throw new RuntimeException("Offset is invalid");
         }
+    }
+
+    T getMiddleOfList() {
+        Node<T> slowPointer = head;
+        Node<T> fastPointer = head;
+        while (fastPointer.next != null && fastPointer.next.next != null) {
+            fastPointer = fastPointer.next.next;
+            slowPointer = slowPointer.next;
+        }
+        return slowPointer.value;
     }
 
     @Override
@@ -96,7 +106,7 @@ public class LinkedList<T> {
             String result = "head";
             Node<T> current = head;
             while (current != null) {
-                result =String.format("%s-->[%s]", result,current.value);
+                result = String.format("%s-->[%s]", result, current.value);
                 current = current.next;
             }
             return result;
@@ -105,7 +115,7 @@ public class LinkedList<T> {
         }
     }
 
-     private static class Node<T> {
+    private static class Node<T> {
         private Node<T> next;
         private T value;
 
