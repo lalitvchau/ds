@@ -35,7 +35,7 @@ public class CircularListProblems<T> {
         }
     }
 
-    boolean isContainCircular(CircularListProblems<T> list2) {
+    boolean isBothContectedAndContainsCircle(CircularListProblems<T> list2) {
         Node<T> fastPointer = head;
         Node<T> slowPointer = list2.head;
         if (fastPointer == null || slowPointer == null) {
@@ -53,7 +53,7 @@ public class CircularListProblems<T> {
         }
     }
 
-    T startNodeOfCircle(CircularListProblems<T> list2) {
+    T connectedNodeOfTwoList(CircularListProblems<T> list2) {
         Node<T> fastPointer = head;
         Node<T> slowPointer = list2.head;
         if (fastPointer == null || slowPointer == null) {
@@ -67,12 +67,53 @@ public class CircularListProblems<T> {
                     slowPointer = slowPointer.next;
                 }
             }
-            fastPointer = length > list2.length ? head: list2.head;
+            fastPointer = length > list2.length ? head : list2.head;
             while (slowPointer != fastPointer) {
                 slowPointer = slowPointer.next;
                 fastPointer = fastPointer.next.next;
             }
             return fastPointer.value;
+        }
+    }
+
+    boolean isListContainsCircle() {
+        Node<T> slowPointer = head;
+        Node<T> fastPointer = head;
+        if (fastPointer == null || slowPointer == null) {
+            return false;
+        } else {
+            do {
+                if (fastPointer.next == null || slowPointer.next == null) {
+                    return false;
+                } else {
+                    fastPointer = fastPointer.next.next;
+                    slowPointer = slowPointer.next;
+                }
+            } while (fastPointer != slowPointer);
+            return true;
+        }
+    }
+
+    T getStartNodeOfListCircle() {
+        Node<T> slowPointer = head;
+        Node<T> fastPointer = head;
+        if (fastPointer == null) {
+            return null;
+        } else {
+            do {
+                if (fastPointer.next == null || slowPointer.next == null) {
+                    return null;
+                } else {
+                    fastPointer = fastPointer.next.next;
+                    slowPointer = slowPointer.next;
+                }
+            } while (fastPointer != slowPointer);
+            slowPointer = head;
+            while (fastPointer != slowPointer) {
+                fastPointer = fastPointer.next;
+                slowPointer = slowPointer.next;
+            }
+            return slowPointer.value;
         }
     }
 
@@ -100,14 +141,19 @@ public class CircularListProblems<T> {
 
         System.out.println(list);
         System.out.println(list2);
-        System.out.println(list.isContainCircular(list2));
+        System.out.println(list.isBothContectedAndContainsCircle(list2));
 
         CircularListProblems<Integer> newList = new CircularListProblems<>(12);
         newList.getLastNode().next = null;
-        System.out.println(list.isContainCircular(newList));
+        System.out.println(list.isBothContectedAndContainsCircle(newList));
 
-        System.out.println("Start node of circle = " + list.startNodeOfCircle(list2));
-        System.out.println("Start node of circle = " + list2.startNodeOfCircle(list));
+        System.out.println("Start node of circle = " + list.connectedNodeOfTwoList(list2));
+        System.out.println("Start node of circle = " + list2.connectedNodeOfTwoList(list));
+
+        System.out.println("=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=");
+        System.out.println(list2);
+        System.out.println("List two is contains circle = " + list2.isListContainsCircle());
+        System.out.println("List two circle start node= " + list2.getStartNodeOfListCircle());
     }
 
     private static class Node<T> {
