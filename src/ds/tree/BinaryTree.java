@@ -5,15 +5,18 @@ import ds.queue.Queue;
 public class BinaryTree<E> {
     Node<E> root;
 
-    BinaryTree(E data) {
+    public BinaryTree(E data) {
         root = new Node<>(data, null, null);
     }
 
-    Node<E> getRoot() {
+    public  BinaryTree() {
+    }
+
+    public Node<E> getRoot() {
         return root;
     }
 
-    static void preOrder(Node root) {
+    public static void preOrder(Node root) {
         if (root != null) {
             System.out.println(root.data);
             preOrder(root.left);
@@ -21,7 +24,7 @@ public class BinaryTree<E> {
         }
     }
 
-    static void inOrder(Node root) {
+    public static void inOrder(Node root) {
         if (root != null) {
             inOrder(root.left);
             System.out.println(root.data);
@@ -29,7 +32,7 @@ public class BinaryTree<E> {
         }
     }
 
-    static void postOrder(Node root) {
+    public static void postOrder(Node root) {
         if (root != null) {
             postOrder(root.left);
             postOrder(root.right);
@@ -37,42 +40,58 @@ public class BinaryTree<E> {
         }
     }
 
-    void levelOrder() {
+    public static boolean preOrderSearch(Node root, Object target) {
+        if (root != null) {
+            if (root.data == target) {
+                return true;
+            }
+            if (preOrderSearch(root.left, target) || preOrderSearch(root.right, target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void levelOrder() {
         Queue<Node<E>> queue = new Queue<>();
         Node<E> current = root;
-        queue.enqueue(current);
-        while (queue.isNotEmpty()) {
-            Node<E> node = queue.dequeue();
-            System.out.println(node.data);
-            if (node.left != null) {
-                queue.enqueue(node.left);
-            }
-            if (node.right != null) {
-                queue.enqueue(node.right);
+        if (root != null) {
+            queue.enqueue(current);
+            while (queue.isNotEmpty()) {
+                Node<E> node = queue.dequeue();
+                System.out.println(node.data);
+                if (node.left != null) {
+                    queue.enqueue(node.left);
+                }
+                if (node.right != null) {
+                    queue.enqueue(node.right);
+                }
             }
         }
     }
 
-    static Integer findMaxElementLevelOrder(Node<Integer> root) {
+    public static Integer findMaxElementLevelOrder(Node<Integer> root) {
         Queue<Node<Integer>> queue = new Queue<>();
         Integer max = Integer.MIN_VALUE;
-        queue.enqueue(root);
-        while (queue.isNotEmpty()) {
-            Node<Integer> node = queue.dequeue();
-            if (node.data > max) {
-                max = node.data;
-            }
-            if (node.left != null) {
-                queue.enqueue(node.left);
-            }
-            if (node.right != null) {
-                queue.enqueue(node.right);
+        if (root != null) {
+            queue.enqueue(root);
+            while (queue.isNotEmpty()) {
+                Node<Integer> node = queue.dequeue();
+                if (node.data > max) {
+                    max = node.data;
+                }
+                if (node.left != null) {
+                    queue.enqueue(node.left);
+                }
+                if (node.right != null) {
+                    queue.enqueue(node.right);
+                }
             }
         }
         return max;
     }
 
-    static Integer findMaximumElement(Node<Integer> root) {
+    public static Integer findMaximumElement(Node<Integer> root) {
         int max = Integer.MIN_VALUE;
         if (root != null) {
             Integer rootValue = root.data;
@@ -86,18 +105,40 @@ public class BinaryTree<E> {
         return max;
     }
 
+    public void insert(E data) {
+        Node<E> newNode = new Node<>(data, null, null);
+        if (root == null) {
+            root = newNode;
+        } else {
+            Queue<Node<E>> queue = new Queue<>();
+            queue.enqueue(root);
+            while (queue.isNotEmpty()) {
+                Node<E> current = queue.dequeue();
+                if (current.left == null) {
+                    current.left = newNode;
+                    break;
+                } else {
+                    queue.enqueue(current.left);
+                }
+                if (current.right == null) {
+                    current.right = newNode;
+                    break;
+                } else {
+                    queue.enqueue(current.right);
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        BinaryTree<Integer> tree = new BinaryTree<>(1);
-        tree.getRoot().addLeft(2);
-        tree.getRoot().addRight(3);
-
-        Node<Integer> left = tree.getRoot().getLeft();
-        left.addLeft(4);
-        left.addRight(5);
-
-        Node<Integer> right = tree.getRoot().getRight();
-        right.addLeft(6);
-        right.addRight(7);
+        BinaryTree<Integer> tree = new BinaryTree<>();
+        tree.insert(1);
+        tree.insert(2);
+        tree.insert(3);
+        tree.insert(4);
+        tree.insert(5);
+        tree.insert(6);
+        tree.insert(7);
 
         System.out.println("Pre order");
         preOrder(tree.getRoot());
@@ -113,6 +154,8 @@ public class BinaryTree<E> {
 
         System.out.println("Maximum element =" + findMaximumElement(tree.getRoot()));
         System.out.println("Maximum element =" + findMaxElementLevelOrder(tree.getRoot()));
+        System.out.println("Find element =" + preOrderSearch(tree.getRoot(), 7));
+        System.out.println("Find element =" + preOrderSearch(tree.getRoot(), 77));
     }
 
     static class Node<E> {
