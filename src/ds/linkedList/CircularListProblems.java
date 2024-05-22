@@ -117,6 +117,29 @@ public class CircularListProblems<T> {
         }
     }
 
+    int lengthCircle() {
+        Node<T> slowPointer = head;
+        Node<T> fastPointer = head;
+        int length = 0;
+        if (fastPointer == null) {
+            return length;
+        } else {
+            do {
+                if (fastPointer.next == null || slowPointer.next == null) {
+                    return length;
+                } else {
+                    fastPointer = fastPointer.next.next;
+                    slowPointer = slowPointer.next;
+                }
+            } while (fastPointer != slowPointer);
+            do {
+                fastPointer = fastPointer.next;
+                length++;
+            } while (fastPointer != slowPointer);
+            return length;
+        }
+    }
+
     public Node<T> getLastNode() {
         Node<T> current = head;
         for (int i = 0; i < length - 1; i++) {
@@ -154,6 +177,7 @@ public class CircularListProblems<T> {
         System.out.println(list2);
         System.out.println("List two is contains circle = " + list2.isListContainsCircle());
         System.out.println("List two circle start node= " + list2.getStartNodeOfListCircle());
+        System.out.println("Length of circle= " + list2.lengthCircle());
     }
 
     private static class Node<T> {
