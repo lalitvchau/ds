@@ -1,38 +1,42 @@
 package ds.queue;
 
-public class Queue<T> {
-    T[] store;
-    int capacity = 4;
-    int size = 0;
-    int front = 0, rear = -1;
+public class Queue<E> {
 
-    Queue() {
-        store = (T[]) new Object[capacity];
-    }
+    private Node<E> front;
+    private Node<E> rear;
+    private int size = 0;
 
-    Queue(int capacity) {
-        store = (T[]) new Object[capacity];
-        this.capacity = capacity;
-    }
 
-    void enqueue(T value) {
-        if (rear != (front - 1) % (capacity - 1)) {
-            rear %= capacity;
-            store[rear] = value;
-            size++;
+    public void enqueue(E value) {
+        if (rear == null && front == null) {
+            rear = front = new Node<>(value, null);
         } else {
-            throw new RuntimeException("Queue is full");
+            rear.next = new Node<>(value, null);
+            rear = rear.next;
         }
+        size++;
     }
 
-    T dequeue() {
-        if (rear <= front) {
+    public E dequeue() {
+        if (isEmpty()) {
+            throw new RuntimeException("Underflow Exception: Stack is empty");
+        } else {
+            E value = front.value;
+            front = front.next;
             size--;
-            front %= capacity;
-            return store[front];
-        } else {
-            throw new RuntimeException("Queue is empty");
+            if (isEmpty()) {
+                rear = front;
+            }
+            return value;
         }
+    }
+
+    public boolean isNotEmpty() {
+        return size > 0;
+    }
+
+    public boolean isEmpty() {
+        return size <= 0;
     }
 
     int size() {
@@ -42,17 +46,34 @@ public class Queue<T> {
     @Override
     public String toString() {
         String result = "[";
-        int tempFront = front;
-        while (tempFront < rear && store[tempFront] != null) {
-            result = String.format("%s%s", result, store[tempFront]);
-            tempFront = tempFront % capacity - 1;
+        Node<E> current = front;
+        while (current != null) {
+            result = String.format("%s%s ", result, current.value);
+            current = current.next;
         }
         return String.format("%s]", result);
     }
 
+    private static class Node<E> {
+        E value;
+        Node<E> next;
+
+        Node(E value, Node<E> next) {
+            this.value = value;
+            this.next = next;
+        }
+    }
+
     public static void main(String[] args) {
-        Queue<Integer> integerQueue = new Queue<>();
-        integerQueue.enqueue(12);
-        System.out.println(integerQueue);
+        Queue<String> list = new Queue<>();
+        System.out.println(list);
+        System.out.println(list.isEmpty());
+
+        list.enqueue("Yes");
+        list.enqueue("Ram");
+        System.out.println(list);
+        System.out.println(list.dequeue());
+        System.out.println(list.dequeue());
+        System.out.println(list);
     }
 }

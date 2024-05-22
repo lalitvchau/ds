@@ -1,5 +1,7 @@
 package ds.tree;
 
+import ds.queue.Queue;
+
 public class BinaryTree<E> {
     Node<E> root;
 
@@ -11,7 +13,7 @@ public class BinaryTree<E> {
         return root;
     }
 
-    void preOrder(Node<E> root) {
+    static void preOrder(Node root) {
         if (root != null) {
             System.out.println(root.data);
             preOrder(root.left);
@@ -19,7 +21,7 @@ public class BinaryTree<E> {
         }
     }
 
-    void inOrder(Node<E> root) {
+    static void inOrder(Node root) {
         if (root != null) {
             inOrder(root.left);
             System.out.println(root.data);
@@ -27,12 +29,61 @@ public class BinaryTree<E> {
         }
     }
 
-    void postOrder(Node<E> root) {
+    static void postOrder(Node root) {
         if (root != null) {
             postOrder(root.left);
             postOrder(root.right);
             System.out.println(root.data);
         }
+    }
+
+    void levelOrder() {
+        Queue<Node<E>> queue = new Queue<>();
+        Node<E> current = root;
+        queue.enqueue(current);
+        while (queue.isNotEmpty()) {
+            Node<E> node = queue.dequeue();
+            System.out.println(node.data);
+            if (node.left != null) {
+                queue.enqueue(node.left);
+            }
+            if (node.right != null) {
+                queue.enqueue(node.right);
+            }
+        }
+    }
+
+    static Integer findMaxElementLevelOrder(Node<Integer> root) {
+        Queue<Node<Integer>> queue = new Queue<>();
+        Integer max = Integer.MIN_VALUE;
+        queue.enqueue(root);
+        while (queue.isNotEmpty()) {
+            Node<Integer> node = queue.dequeue();
+            if (node.data > max) {
+                max = node.data;
+            }
+            if (node.left != null) {
+                queue.enqueue(node.left);
+            }
+            if (node.right != null) {
+                queue.enqueue(node.right);
+            }
+        }
+        return max;
+    }
+
+    static Integer findMaximumElement(Node<Integer> root) {
+        int max = Integer.MIN_VALUE;
+        if (root != null) {
+            Integer rootValue = root.data;
+            Integer left = findMaximumElement(root.left);
+            Integer right = findMaximumElement(root.right);
+            max = left > right ? left : right;
+            if (rootValue > max) {
+                max = rootValue;
+            }
+        }
+        return max;
     }
 
     public static void main(String[] args) {
@@ -49,14 +100,19 @@ public class BinaryTree<E> {
         right.addRight(7);
 
         System.out.println("Pre order");
-        tree.preOrder(tree.getRoot());
+        preOrder(tree.getRoot());
 
         System.out.println("Post order");
-        tree.postOrder(tree.getRoot());
+        postOrder(tree.getRoot());
 
         System.out.println("In order");
-        tree.inOrder(tree.getRoot());
+        inOrder(tree.getRoot());
 
+        System.out.println("Level order");
+        tree.levelOrder();
+
+        System.out.println("Maximum element =" + findMaximumElement(tree.getRoot()));
+        System.out.println("Maximum element =" + findMaxElementLevelOrder(tree.getRoot()));
     }
 
     static class Node<E> {
