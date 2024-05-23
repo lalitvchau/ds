@@ -9,7 +9,7 @@ public class BinaryTree<E> {
         root = new Node<>(data, null, null);
     }
 
-    public  BinaryTree() {
+    public BinaryTree() {
     }
 
     public Node<E> getRoot() {
@@ -105,7 +105,19 @@ public class BinaryTree<E> {
         return max;
     }
 
-    public void insert(E data) {
+    public int size() {
+        return size(root);
+    }
+
+    private int size(Node<E> root) {
+        if (root == null) {
+            return 0;
+        } else {
+            return size(root.left) + 1 + size(root.right);
+        }
+    }
+
+    public BinaryTree<E> insert(E data) {
         Node<E> newNode = new Node<>(data, null, null);
         if (root == null) {
             root = newNode;
@@ -127,6 +139,35 @@ public class BinaryTree<E> {
                     queue.enqueue(current.right);
                 }
             }
+        }
+        return this;
+    }
+
+    public int height() {
+        return height(root);
+    }
+
+    private int height(Node<E> root) {
+        if (root == null) {
+            return 0;
+        } else {
+            int leftHeight = height(root.left);
+            int rightHeight = height(root.right);
+            return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
+        }
+    }
+
+    public void mirror() {
+        mirror(root);
+    }
+
+    private void mirror(Node<E> root) {
+        if (root != null) {
+            Node<E> tempNode = root.left;
+            root.left = root.right;
+            root.right = tempNode;
+            mirror(root.left);
+            mirror(root.right);
         }
     }
 
@@ -156,6 +197,15 @@ public class BinaryTree<E> {
         System.out.println("Maximum element =" + findMaxElementLevelOrder(tree.getRoot()));
         System.out.println("Find element =" + preOrderSearch(tree.getRoot(), 7));
         System.out.println("Find element =" + preOrderSearch(tree.getRoot(), 77));
+        System.out.println("Size =" + tree.size());
+        System.out.println("Height =" + tree.height());
+        System.out.println("Height =" + (new BinaryTree().insert(12)).height());
+
+        System.out.println("Tree before mirror");
+        tree.levelOrder();
+        tree.mirror();
+        System.out.println("Tree after mirror");
+        tree.levelOrder();
     }
 
     static class Node<E> {
