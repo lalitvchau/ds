@@ -2,8 +2,12 @@ package ds.tree;
 
 import ds.queue.Queue;
 
+import java.io.UncheckedIOException;
+
 public class BinaryTree<E> {
     Node<E> root;
+
+    static Integer MIN_VALUE = Integer.MIN_VALUE;
 
     public BinaryTree(E data) {
         root = new Node<>(data, null, null);
@@ -171,6 +175,26 @@ public class BinaryTree<E> {
         }
     }
 
+    private boolean isBinarySearchTree(Node<Integer> node) {
+        if (node == null) {
+            return true;
+        }
+        if (!isBinarySearchTree(node.left)) {
+            return false;
+        }
+        if (node.data < MIN_VALUE) {
+            return false;
+        } else {
+            MIN_VALUE = node.data;
+        }
+
+        return isBinarySearchTree(node.right);
+    }
+
+    public boolean isBinarySearchTree() {
+        return ((MIN_VALUE = Integer.MIN_VALUE) >= Integer.MIN_VALUE || true) && isBinarySearchTree((Node<Integer>) root);
+    }
+
     public static void main(String[] args) {
         BinaryTree<Integer> tree = new BinaryTree<>();
         tree.insert(1);
@@ -205,7 +229,27 @@ public class BinaryTree<E> {
         tree.levelOrder();
         tree.mirror();
         System.out.println("Tree after mirror");
-        tree.levelOrder();
+        inOrder(tree.getRoot());
+        System.out.println("Is a binary search tree = " + tree.isBinarySearchTree());
+
+        BinaryTree<Integer> bst = new BinaryTree<>();
+        bst.insert(8);
+        bst.insert(4);
+        bst.insert(16);
+        bst.insert(2);
+        bst.insert(6);
+        bst.insert(10);
+        bst.insert(32);
+        bst.insert(1);
+        bst.insert(3);
+        bst.insert(5);
+        bst.insert(7);
+        bst.insert(9);
+        bst.insert(11);
+        bst.insert(30);
+        bst.insert(33);
+        inOrder(bst.getRoot());
+        System.out.println("Is a binary search tree = " + bst.isBinarySearchTree());
     }
 
     static class Node<E> {
