@@ -6,7 +6,7 @@ public class Stack<T> {
 
     int top = -1;
 
-    Stack() {
+    public Stack() {
         store = (T[]) new Object[maxSize];
     }
 
@@ -22,14 +22,14 @@ public class Stack<T> {
         top = args.length - 1;
     }
 
-    void push(T value) {
+    public void push(T value) {
         if ((top + 1) % maxSize == 0) {
             shift(maxSize * 2);
         }
         store[++top] = value;
     }
 
-    T pop() {
+    public T pop() {
         T returnItem = store[top];
         if (top-- % (maxSize / 2) == 0) {
             shift(maxSize / 2);
@@ -41,8 +41,8 @@ public class Stack<T> {
         return store;
     }
 
-    void addAll(Stack<T> stack){
-        for(T item:stack.toArray()){
+    void addAll(Stack<T> stack) {
+        for (T item : stack.toArray()) {
             push(item);
         }
     }
@@ -51,7 +51,7 @@ public class Stack<T> {
         return top > -1 ? store[top] : null;
     }
 
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return top < 0;
     }
 

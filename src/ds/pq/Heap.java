@@ -5,8 +5,39 @@ import java.util.Arrays;
 public class Heap {
     int count = 0;
     int capacity;
-    int[] store;
+    Node[] store;
     boolean isMaxHeap = false;
+
+    public static class Node {
+        int key;
+        int weight;
+
+        public int getKey() {
+            return key;
+        }
+
+        public void setKey(int key) {
+            this.key = key;
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
+
+        public Node(int key, int weight) {
+            this.key = key;
+            this.weight = weight;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("[ key=%d: weight=%d]", key, weight);
+        }
+    }
 
     /**
      * Max heap if param isMaxHeap is true, otherwise min-hip
@@ -17,7 +48,7 @@ public class Heap {
     public Heap(int capacity, boolean isMaxHeap) {
         this.capacity = capacity;
         this.isMaxHeap = isMaxHeap;
-        this.store = new int[capacity];
+        this.store = new Node[capacity];
     }
 
     /**
@@ -27,7 +58,7 @@ public class Heap {
      */
     public Heap(int capacity) {
         this.capacity = capacity;
-        this.store = new int[capacity];
+        this.store = new Node[capacity];
     }
 
     public void print() {
@@ -39,29 +70,39 @@ public class Heap {
     }
 
     private void resizeStore(int capacity) {
-        int[] backupStore = store;
-        store = new int[capacity];
+        Node[] backupStore = store;
+        store = new Node[capacity];
         this.capacity = capacity;
         for (int i = 0; i < count; i++) {
             store[i] = backupStore[i];
         }
     }
 
-    public void insert(int item) {
+    public void insert(int key, int weight) {
         if (capacity == count) {
             resizeStore(capacity * 2);
         }
-        store[count++] = item;
+        store[count++] = new Node(key, weight);
         percolateUp(count - 1);
     }
 
-    public void delete() {
+    public void insert(Node node) {
+        if (capacity == count) {
+            resizeStore(capacity * 2);
+        }
+        store[count++] = node;
+        percolateUp(count - 1);
+    }
+
+    public Node delete() {
+        Node deletedItem = store[0];
         store[0] = store[--count];
-        store[count] = -1;
-        if (count % capacity == 0) {
+        store[count] = null;
+        if (count > 0 && count % capacity == 0) {
             resizeStore(capacity / 2);
         }
         percolateDown(0);
+        return deletedItem;
     }
 
     public int findParent(int index) {
@@ -85,18 +126,18 @@ public class Heap {
                 int leftChildIndex = findLeftChildren(targetIndex);
                 int rightChildIndex = findRightChildren(targetIndex);
                 int maxIndex = targetIndex;
-                if (leftChildIndex != -1 && ((isMaxHeap && store[leftChildIndex] > store[maxIndex]) ||
-                        (!isMaxHeap && store[leftChildIndex] < store[maxIndex]))) {
+                if (leftChildIndex != -1 && ((isMaxHeap && store[leftChildIndex].weight > store[maxIndex].weight) ||
+                        (!isMaxHeap && store[leftChildIndex].weight < store[maxIndex].weight))) {
                     maxIndex = leftChildIndex;
                 } else if (rightChildIndex != -1 && (
-                        (isMaxHeap && store[rightChildIndex] > store[maxIndex]) ||
-                                (!isMaxHeap && store[rightChildIndex] < store[maxIndex])
+                        (isMaxHeap && store[rightChildIndex].weight > store[maxIndex].weight) ||
+                                (!isMaxHeap && store[rightChildIndex].weight < store[maxIndex].weight)
                 )) {
                     maxIndex = rightChildIndex;
                 }
 
                 if (maxIndex != targetIndex) {
-                    int temp = store[maxIndex];
+                    Node temp = store[maxIndex];
                     store[maxIndex] = store[targetIndex];
                     store[targetIndex] = temp;
                     percolateDown(maxIndex);
@@ -109,9 +150,9 @@ public class Heap {
         if (store != null) {
             if (targetIndex != -1) {
                 int parentIndex = findParent(targetIndex);
-                if (parentIndex != -1 && (isMaxHeap && store[parentIndex] < store[targetIndex]) ||
-                        (!isMaxHeap && store[parentIndex] > store[targetIndex])) {
-                    int temp = store[parentIndex];
+                if (parentIndex != -1 && (isMaxHeap && store[parentIndex].weight < store[targetIndex].weight) ||
+                        (!isMaxHeap && store[parentIndex].weight > store[targetIndex].weight)) {
+                    Node temp = store[parentIndex];
                     store[parentIndex] = store[targetIndex];
                     store[targetIndex] = temp;
                     percolateUp(parentIndex);
@@ -120,13 +161,13 @@ public class Heap {
         }
     }
 
-    private int search(int key) {
+    private int search(int weight) {
         int i = 0, j = count - 1;
         while (i < j) {
-            if (store[i] == key) {
+            if (store[i].weight == weight) {
                 return i;
             }
-            if (store[j] == key) {
+            if (store[j].weight == weight) {
                 return j;
             }
             i++;
@@ -135,27 +176,35 @@ public class Heap {
         return -1;
     }
 
+    public boolean isEmpty() {
+        return count <= 0;
+    }
+
+    public boolean isNotEmpty() {
+        return count > 0;
+    }
+
     public static void main(String[] args) {
         Heap maxHeap = new Heap(10, true);
-        maxHeap.insert(7);
-        maxHeap.insert(5);
-        maxHeap.insert(6);
-        maxHeap.insert(1);
-        maxHeap.insert(4);
-        maxHeap.insert(2);
-        maxHeap.insert(3);
-        maxHeap.insert(17);
+        maxHeap.insert(0, 7);
+        maxHeap.insert(1, 5);
+        maxHeap.insert(2, 6);
+        maxHeap.insert(3, 1);
+        maxHeap.insert(4, 4);
+        maxHeap.insert(5, 2);
+        maxHeap.insert(6, 3);
+        maxHeap.insert(7, 17);
         maxHeap.print();
         maxHeap.delete();
         maxHeap.print();
         Heap minHeap = new Heap(3);
-        minHeap.insert(20);
-        minHeap.insert(30);
-        minHeap.insert(18);
-        minHeap.insert(16);
-        minHeap.insert(14);
-        minHeap.insert(13);
-        minHeap.insert(12);
+        minHeap.insert(1, 20);
+        minHeap.insert(2, 30);
+        minHeap.insert(3, 18);
+        minHeap.insert(4, 16);
+        minHeap.insert(5, 14);
+        minHeap.insert(6, 13);
+        minHeap.insert(7, 12);
         minHeap.print();
         minHeap.delete();
         minHeap.print();
