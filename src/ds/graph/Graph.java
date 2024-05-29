@@ -7,6 +7,9 @@ import ds.stack.Stack;
 public class Graph {
     boolean isDirectedGraph;
     boolean[][] adjMatrix;
+
+    int dfsum[], num = 0, low[];
+
     int totalVertices, totalEdges = 0;
 
     public Graph(int totalVertices, boolean isDirectedGraph) {
@@ -23,6 +26,11 @@ public class Graph {
             throw new IllegalArgumentException("Both Vertices mus be valid");
         }
     }
+
+    public boolean addEdge(char vertex1, char vertex2) {
+        return addEdge(vertex1 - 'A', vertex2 - 'A');
+    }
+
 
     public boolean addEdge(int vertex1, int vertex2) {
         isValidEdge(vertex1, vertex2);
@@ -47,7 +55,7 @@ public class Graph {
             int nextNode = stack.pop();
             if (!visited[nextNode]) {
                 visited[nextNode] = true;
-                System.out.printf("(%d) ", nextNode);
+                System.out.printf("(%c) ", nextNode + 'A');
                 for (int i = 0; i < totalVertices; i++) {
                     if (adjMatrix[nextNode][i] && !visited[i]) {
                         stack.push(i);
@@ -67,7 +75,7 @@ public class Graph {
             int nextNode = queue.dequeue();
             if (!visited[nextNode]) {
                 visited[nextNode] = true;
-                System.out.printf("(%d) ", nextNode);
+                System.out.printf("(%c) ", nextNode + 'A');
                 for (int i = 0; i < totalVertices; i++) {
                     if (adjMatrix[nextNode][i] && !visited[i]) {
                         queue.enqueue(i);
@@ -76,6 +84,36 @@ public class Graph {
             }
         }
         System.out.println();
+    }
+
+    public void cutVertices(char vertex) {
+        num = 0;
+        dfsum = new int[totalVertices];
+        low = new int[totalVertices];
+        for (int i = 0; i < totalVertices; i++) {
+            dfsum[i] = low[i] = -1;
+        }
+        cutVerticesAndEdge(vertex - 'A');
+    }
+
+    private void cutVerticesAndEdge(int vertex) {
+        low[vertex] = dfsum[vertex] = num++;
+        for (int i = 0; i < totalVertices; i++) {
+            if (adjMatrix[vertex][i] && dfsum[i] == -1) {
+                cutVerticesAndEdge(i);
+                if (low[i] > dfsum[vertex]) {
+                    System.out.println("Cut vertex = " + vertex);
+                    System.out.printf("Bridge edge (%d, %d) ", vertex + 'A', i + 'A');
+                }
+                if (low[i] < low[vertex]) {
+                    low[vertex] = low[i];
+                }
+            } else {
+                if (dfsum[i] < low[vertex]) {
+                    low[vertex] = dfsum[i];
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -91,5 +129,18 @@ public class Graph {
 
         graph.dfs();
         graph.bfs();
+        graph.cutVertices('A');
+
+        Graph graph2 = new Graph(7, false);
+        graph2.addEdge('A', 'B');
+        graph2.addEdge('A', 'D');
+        graph2.addEdge('B', 'C');
+        graph2.addEdge('C', 'D');
+        graph2.addEdge('C', 'G');
+        graph2.addEdge('D', 'E');
+        graph2.addEdge('D', 'F');
+        graph2.addEdge('E', 'F');
+        graph2.dfs();
+        graph2.cutVertices('C');
     }
 }
